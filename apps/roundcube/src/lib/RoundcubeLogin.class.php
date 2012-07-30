@@ -319,7 +319,11 @@ class RoundcubeLogin {
      */
     private function sendRequest($path, $postData = false) {
         $method = (!$postData) ? "GET" : "POST";
-        $port = ($_SERVER['HTTPS'] || $_SERVER['HTTP_X_FORWARDED_PROTO']=='https') ? 443 : 80;
+        # Prevent index error because "There is no guarantee that every web
+        # server will provide any of these; servers may omit some, or provide
+        # others not listed here." 
+        # (http://www.php.net/manual/en/reserved.variables.server.php)
+        $port = (isset($_SERVER['HTTPS']) || isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO']=='https') ? 443 : 80;
         $host = (($port == 443) ? "ssl://" : "").$_SERVER['HTTP_HOST'];
         
         
